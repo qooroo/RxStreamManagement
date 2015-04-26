@@ -7,7 +7,7 @@ namespace RxStreamManagement.Server
 {
     public static class MarginUpdateProcessor
     {
-        public static IObservable<int> HighestRolling(
+        public static IObservable<int> MaxValueRollingBuffer(
             this IObservable<MarginUpdate> source,
             TimeSpan bufferLength,
             TimeSpan processFrequency,

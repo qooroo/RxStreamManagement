@@ -33,7 +33,7 @@ namespace RxStreamManagement.Server
                 .Subscribe(i => AllMargins.Text += i.Margin + Environment.NewLine);
 
             source
-                .HighestRolling(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(2), Scheduler.Default)
+                .MaxValueRollingBuffer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(2), Scheduler.Default)
                 .ObserveOnDispatcher()
                 .Subscribe(maxValue => HighMargin.Text = maxValue.ToString());
 

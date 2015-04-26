@@ -28,7 +28,7 @@ namespace RxStreamManagement.Server.Tests
             var processFrequency = TimeSpan.FromTicks(20);
 
             _source
-                .HighestRolling(bufferLength, processFrequency, _scheduler)
+                .MaxValueRollingBuffer(bufferLength, processFrequency, _scheduler)
                 .Subscribe(_results.Add);
 
             _scheduler.ScheduleRelative(10, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(1)));
