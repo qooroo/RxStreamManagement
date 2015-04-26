@@ -31,19 +31,19 @@ namespace RxStreamManagement.Server.Tests
                 .MaxValueRollingBuffer(bufferLength, processFrequency, _scheduler)
                 .Subscribe(_results.Add);
 
-            _scheduler.ScheduleRelative(10, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(1)));
+            _scheduler.ScheduleRelative(10, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(1)));
             // onnexts result @ 20
-            _scheduler.ScheduleRelative(30, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(2)));
+            _scheduler.ScheduleRelative(30, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(2)));
             // onnexts result @ 40
-            _scheduler.ScheduleRelative(50, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(1)));
+            _scheduler.ScheduleRelative(50, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(1)));
             // onnexts result @ 60
-            _scheduler.ScheduleRelative(70, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(4)));
+            _scheduler.ScheduleRelative(70, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(4)));
             // onnexts result @ 80
-            _scheduler.ScheduleRelative(70, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(1)));
+            _scheduler.ScheduleRelative(70, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(1)));
             // onnexts result @ 100
-            _scheduler.ScheduleRelative(110, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(3)));
+            _scheduler.ScheduleRelative(110, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(3)));
             // onnexts result @ 120
-            _scheduler.ScheduleRelative(130, () => _source.OnNext(MarginUpdatetGenerator.WithMargin(2)));
+            _scheduler.ScheduleRelative(130, () => _source.OnNext(DummyMarginUpdateSource.WithMargin(2)));
             // onnexts result @ 140
         }
 

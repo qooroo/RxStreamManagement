@@ -3,14 +3,16 @@ using System.Reactive.Linq;
 
 namespace RxStreamManagement.Server.DataGenerator
 {
-    public class MarginUpdatetGenerator
+    public class DummyMarginUpdateSource : IMarginUpdateSource
     {
         private readonly Random _random = new Random();
-        public IObservable<MarginUpdate> GenerateMarginUpdateStream(TimeSpan interval)
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
+
+        public IObservable<MarginUpdate> MarginUpdateStream()
         {
             return Observable.Create<MarginUpdate>(observer =>
             {
-                return Observable.Interval(interval)
+                return Observable.Interval(_interval)
                     .Subscribe(_ =>
                         observer.OnNext(new MarginUpdate
                         {

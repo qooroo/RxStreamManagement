@@ -7,7 +7,7 @@ namespace RxStreamManagement.Server
 {
     public partial class MainWindow
     {
-        private readonly MarginUpdatetGenerator _generator;
+        private readonly DummyMarginUpdateSource _source;
 
         public MainWindow()
         {
@@ -19,14 +19,17 @@ namespace RxStreamManagement.Server
                 .ObserveOnDispatcher()
                 .Subscribe(_ => Clock.Text = DateTime.Now.ToString("HH:mm:ss"));
 
-            _generator = new MarginUpdatetGenerator();
+            _source = new DummyMarginUpdateSource();
 
             Run();
+
+            var b = new Bootstrapper();
+            b.Run();
         }
 
         private void Run()
         {
-            var source = _generator.GenerateMarginUpdateStream(TimeSpan.FromMilliseconds(1000)).Publish();
+            var source = _source.MarginUpdateStream().Publish();
 
             source
                 .ObserveOnDispatcher()

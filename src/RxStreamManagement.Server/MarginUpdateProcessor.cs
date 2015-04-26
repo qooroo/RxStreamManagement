@@ -15,7 +15,8 @@ namespace RxStreamManagement.Server
         {
             return Observable.Create<int>(observer =>
             {
-                var initial = source.Take(bufferLength, scheduler)
+                var initial = source
+                    .Take(bufferLength, scheduler)
                     .Scan(0, (a, s) => Math.Max(a, s.Margin))
                     .Buffer(processFrequency, scheduler)
                     .Where(buffer => buffer.Any())
