@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using RxStreamManagement.Server.DataGenerator;
 
@@ -6,7 +7,7 @@ namespace RxStreamManagement.Server
 {
     public partial class MainWindow
     {
-        private MarginUpdatetGenerator _generator;
+        private readonly MarginUpdatetGenerator _generator;
 
         public MainWindow()
         {
@@ -25,12 +26,14 @@ namespace RxStreamManagement.Server
 
         private void Run()
         {
-            var source = _generator.MarginUpdateStream().Publish();
-
-            source.ObserveOnDispatcher().Subscribe(i => AllMargins.Text += i.Margin + Environment.NewLine);
+            var source = _generator.GenerateMarginUpdateStream(TimeSpan.FromMilliseconds(1000)).Publish();
 
             source
-                .HighestRolling(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(2))
+                .ObserveOnDispatcher()
+                .Subscribe(i => AllMargins.Text += i.Margin + Environment.NewLine);
+
+            source
+                .HighestRolling(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(2), Scheduler.Default)
                 .ObserveOnDispatcher()
                 .Subscribe(maxValue => HighMargin.Text = maxValue.ToString());
 

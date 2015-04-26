@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace RxStreamManagement.Server
@@ -7,19 +8,25 @@ namespace RxStreamManagement.Server
     public static class MarginUpdateProcessor
     {
         public static IObservable<int> HighestRolling(
-            this IObservable<MarginUpdate> src,
+            this IObservable<MarginUpdate> source,
             TimeSpan bufferLength,
-            TimeSpan processFrequency)
+            TimeSpan processFrequency,
+            IScheduler scheduler)
         {
             return Observable.Create<int>(observer =>
             {
-                var initial = src.Take(bufferLength).Scan(0, (a, s) => Math.Max(a, s.Margin));
+                var initial = source.Take(bufferLength, scheduler)
+                    .Scan(0, (a, s) => Math.Max(a, s.Margin))
+                    .Buffer(processFrequency, scheduler)
+                    .Where(buffer => buffer.Any())
+                    .Select(buffer => buffer.Last());
 
-                var windowed = src
-                    .Buffer(bufferLength, processFrequency)
+                var windowed = source
+                    .Buffer(bufferLength, processFrequency, scheduler)
+                    .Where(buffer => buffer.Any())
                     .Select(buffer => buffer.Max(i => i.Margin));
 
-                return initial.Merge(windowed).Subscribe(observer.OnNext);
+                return initial.Merge(windowed, scheduler).Subscribe(observer.OnNext);
             });
         }
     }
