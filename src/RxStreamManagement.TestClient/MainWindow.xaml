@@ -9,8 +9,10 @@
         mc:Ignorable="d">
     <Grid>
         <StackPanel>
-            <TextBlock x:Name="Result" />
-            <Button x:Name="GetAccountsButton" Click="GetAccounts">Get Average For Accounts</Button>
+            <Button Margin="5"
+                    Click="AddWidget"
+                    Content="Add Widget" />
+            <ItemsControl x:Name="Widgets" />
         </StackPanel>
     </Grid>
 </Window>

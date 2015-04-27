@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using Microsoft.AspNet.SignalR.Client;
 
 namespace RxStreamManagement.TestClient
@@ -21,13 +22,19 @@ namespace RxStreamManagement.TestClient
             _hubProxy = _hubConnection.CreateHubProxy("MarginHub");
             _hubConnection.Start();
 
-            _hubProxy.On("update", i => Dispatcher.Invoke(() => Result.Text = i.ToString()));
+            _hubProxy.On("update", t => Dispatcher.Invoke(() =>
+            {
+                foreach (var widget in Widgets.Items.Cast<Widget>().Where(item => item.WidgetId.Text == (string)t.Item1))
+                {
+                    widget.Result.Text = t.Item2;
+                }
+            }));
         }
 
-        private void GetAccounts(object sender, RoutedEventArgs e)
+        private void AddWidget(object sender, RoutedEventArgs e)
         {
-            _hubProxy.Invoke("GetMarginUpdates", new[] {1, 2});
-            GetAccountsButton.IsEnabled = false;
+            var w = new Widget {WidgetParent = this, HubProxy = _hubProxy};
+            Widgets.Items.Add(w);
         }
     }
 }

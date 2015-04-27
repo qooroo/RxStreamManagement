@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using RxStreamManagement.Server.Subscription;
 
@@ -15,12 +15,12 @@ namespace RxStreamManagement.Server.Hubs
             _subscriptionManager = subscriptionManager;
         }
 
-        public void GetMarginUpdates(IEnumerable<string> accounts)
+        public void GetMarginUpdates(Tuple<string, IEnumerable<string>> accountsForId)
         {
             _subscriptionManager.RegisterClientSubscription(
-                Context.ConnectionId,
-                accounts,
-                updates => Clients.Caller.update(updates.Select(u => u.Margin).Average()));
+                Context.ConnectionId+accountsForId.Item1,
+                accountsForId.Item2,
+                updates => Clients.Caller.update(Tuple.Create(accountsForId.Item1, updates.Select(u => u.Margin).Average())));
         }
     }
 }
